@@ -1,0 +1,39 @@
+services:
+  dap-db:
+    build: .
+    container_name: dap-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: world
+    volumes:
+      - dap-db-data:/var/lib/mysql
+    networks:
+      - dap-net
+
+  dap-db-client:
+    image: phpmyadmin:latest
+    container_name: dap-db-client
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: dap-db
+      PMA_PORT: 3306
+    depends_on:
+      - dap-db
+    networks:
+      - dap-net
+
+  passbolt:
+    image: passbolt/passbolt:latest
+    container_name: passbolt
+    ports:
+      - "8081:80"
+    networks:
+      - dap-net
+
+volumes:
+  dap-db-data:
+
+networks:
+  dap-net:
+    driver: bridge
